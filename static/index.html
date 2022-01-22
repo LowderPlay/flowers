@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload</title>
+    <style>
+        .images > img {
+            width: 128px;
+            image-rendering: pixelated;
+            border: solid 1px black;
+        }
+    </style>
+</head>
+<body>
+    <form id="form">
+        <label for="file">Attach file: </label>
+        <input id="file" type="file" name="file"><br>
+        <label for="size">Size</label>
+        <input id="size" type="range" min="8" max="100" name="size" value="16"
+               oninput="this.nextElementSibling.value = this.value">
+        <output>16</output><br>
+        <label for="bri">Brightness</label>
+        <input id="bri" type="range" min="-100" max="100" name="brightness" value="1"
+               oninput="this.nextElementSibling.value = this.value">
+        <output>1</output><br>
+        <label for="cont">Contrast</label>
+        <input id="cont" type="range" min="-3" max="3" step="0.01" name="contrast" value="1"
+               oninput="this.nextElementSibling.value = this.value">
+        <output>1</output><br>
+
+        <button id="button">Send</button>
+    </form>
+    <div class="images">
+        <img id="converted">
+    </div>
+
+    <script>
+        document.getElementById("button").onclick = function (ev) {
+            ev.preventDefault();
+            const request = new XMLHttpRequest();
+            const formData = new FormData(document.getElementById("form"));
+            request.open("POST", "/api/convert", true);
+            request.send(formData);
+            request.onload = function(event) {
+                if (request.status === 200) {
+                    console.log(request.responseText)
+                    document.getElementById("converted").src = JSON.parse(request.responseText).converted;
+                } else {
+                  alert(request.responseText)
+                }
+              };
+        }
+    </script>
+</body>
+</html>
