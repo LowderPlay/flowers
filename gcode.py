@@ -1,12 +1,11 @@
 from enum import Enum
 from time import sleep
 
-# import matplotlib.pyplot as plt
 import mecode
 import numpy as np
 import serial
-from cv2 import cv2
 from mecode.printer import Printer
+from skimage.io import imread
 
 
 class Status(Enum):
@@ -107,7 +106,7 @@ class GCode:
     def parse_image(self, file, com=None):
         if not self.connected:
             self.connect(com)
-        image = cv2.cvtColor(cv2.imread(file, cv2.IMREAD_UNCHANGED), cv2.COLOR_BGRA2RGBA)
+        image = imread(file)
         colors = np.unique(image.reshape(-1, image.shape[2]), axis=0)
         print_size = (1000, 950)  # in mm
 

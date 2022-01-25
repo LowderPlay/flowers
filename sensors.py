@@ -18,6 +18,8 @@ class Sensors:
 
     @property
     def ground_humidity(self):
+        if self._ground_humidity is None:
+            return None
         return round((self._ground_humidity - self._humidity_calibration[0]) / \
                (self._humidity_calibration[1] - self._humidity_calibration[0]), 2) * 100
 

@@ -1,7 +1,8 @@
-FROM python:3.8.12-alpine3.15
+FROM continuumio/anaconda3
 COPY . /app
 WORKDIR /app
-RUN apk add --no-cache libc-dev
-RUN pip install -U pip
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+RUN install_packages libc-dev libatlas3-base libgfortran5
 RUN pip install -r requirements.txt -i https://www.piwheels.org/simple --extra-index-url https://pypi.org/simple
 CMD ["python", "server.py"]

@@ -24,9 +24,11 @@
                oninput="this.nextElementSibling.value = this.value">
         <output>1</output><br>
         <label for="cont">Contrast</label>
-        <input id="cont" type="range" min="-3" max="3" step="0.01" name="contrast" value="1"
+        <input id="cont" type="range" min="0" max="3" step="0.01" name="contrast" value="1"
                oninput="this.nextElementSibling.value = this.value">
         <output>1</output><br>
+        <label for="sharpen">Don't sharpen</label>
+        <input type="checkbox" id="sharpen" name="sharpen" value="false"><br>
 
         <button id="button">Send</button>
     </form>

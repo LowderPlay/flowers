@@ -2,7 +2,9 @@ import os
 import threading
 import uuid
 
+import numpy as np
 from flask import Flask, request, jsonify, send_from_directory, url_for
+from skimage.io import imread
 from werkzeug.utils import secure_filename
 
 import gcode
@@ -42,6 +44,11 @@ def convert_image():
         size = int(request.values.get('size'))
         size = (size, size)
 
+    if 'sharpen' not in request.values.keys():
+        sharpen = True
+    else:
+        sharpen = False
+
     file = request.files['file']
     if file.filename == '':
         return jsonify({"error": "file_not_found"}), 400
@@ -57,7 +64,8 @@ def convert_image():
                   brightness=brightness,
                   contrast=contrast,
                   path=os.path.join(app.config["UPLOAD_FOLDER"], converted_name+".png"),
-                  size=size)
+                  size=size,
+                  sharpen=sharpen)
 
         return jsonify({"original": url_for("download_file", name=original),
                         "converted": url_for("download_file", name=converted_name+".png"),
@@ -107,6 +115,11 @@ def kill():
 
 @app.route('/api/status')
 def get_status():
+    transparent = ([],[])
+    if gc.image is not None:
+        path = os.path.join(app.config["UPLOAD_FOLDER"], gc.image+".png")
+        transparent = np.where(imread(path)[:, :, 3] < 255)
+
     return jsonify({"sensors": {
                         "ground": {
                             "temperature": sensors.ground_temperature,
@@ -116,6 +129,10 @@ def get_status():
                             "temperature": sensors.air_temperature,
                             "humidity": sensors.air_humidity
                         }
+                    },
+                    "transparent": {
+                        "x": transparent[0].tolist(),
+                        "y": transparent[1].tolist()
                     },
                     "progress": {
                         "x": gc.pixels[0],
