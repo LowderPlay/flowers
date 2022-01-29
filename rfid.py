@@ -5,7 +5,7 @@ import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522, MFRC522
 
 reader = SimpleMFRC522()
-reader.READER = MFRC522(spd=100000)
+reader.READER = MFRC522(spd=1000000)
 
 try:
     while True:

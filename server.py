@@ -83,7 +83,7 @@ gc = gcode.GCode()
 
 @app.route('/api/start', methods=['POST'])
 def start():
-    if gc.status is not gcode.Status.IDLE:
+    if gc.status is not gcode.Status.IDLE and not gc.connected:
         return jsonify({"error": "already_running"}), 400
     if "id" not in request.values.keys():
         return jsonify({"error": "missing_id_parameter"}), 400
@@ -115,10 +115,25 @@ def kill():
 
 @app.route('/api/status')
 def get_status():
-    transparent = ([],[])
+    width = None
+    height = None
+    transparent = (np.empty((0, 0)), np.empty((0, 0)))
     if gc.image is not None:
         path = os.path.join(app.config["UPLOAD_FOLDER"], gc.image+".png")
-        transparent = np.where(imread(path)[:, :, 3] < 255)
+        image = imread(path)
+        transparent = np.where(image[:, :, 3] < 255)
+        width, height = image.shape[:2]
+        image = {
+            "url": url_for("download_file", name=gc.image+".png"),
+            "width": int(width),
+            "height": int(height),
+            "transparent": {
+                "x": transparent[0].tolist(),
+                "y": transparent[1].tolist()
+            }
+        }
+    else:
+        image = None
 
     return jsonify({"sensors": {
                         "ground": {
@@ -130,20 +145,16 @@ def get_status():
                             "humidity": sensors.air_humidity
                         }
                     },
-                    "transparent": {
-                        "x": transparent[0].tolist(),
-                        "y": transparent[1].tolist()
-                    },
                     "progress": {
                         "x": gc.pixels[0],
                         "y": gc.pixels[1],
+                        "colors": gc.pixels[2],
                         "percent": round(gc.progress/100, 2)
                     },
                     "status": gc.status.value,
                     "status_code": gc.status.name,
                     "connected": gc.connected,
-                    "image": url_for("download_file", name=gc.image+".png")
-                    if gc.image is not None else None})
+                    "image": image})
 
 
 if __name__ == '__main__':

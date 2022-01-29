@@ -1,7 +1,4 @@
-import time
-
 from rpi_ws281x import PixelStrip, Color, WS2811_STRIP_RGB
-import colorsys
 
 from skimage.io import imread
 
