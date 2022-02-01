@@ -6,7 +6,7 @@ import mecode
 import numpy as np
 import serial
 from mecode.printer import Printer
-from rpi_ws281x import PixelStrip, Color, WS2811_STRIP_RGB
+# from rpi_ws281x import PixelStrip, Color, WS2811_STRIP_RGB
 from skimage.io import imread
 
 import pixz
@@ -35,10 +35,10 @@ class GCode:
         self.status = Status.IDLE
         self._image = None
         self.g = mecode.G(setup=False, direct_write=True, direct_write_mode='serial')
-        self.led_width, self.led_height = 8, 8
-        self.strip = PixelStrip(num=self.led_width*self.led_height,
-                                pin=18, brightness=80, strip_type=WS2811_STRIP_RGB)
-        self.strip.begin()
+        # self.led_width, self.led_height = 8, 8
+        # self.strip = PixelStrip(num=self.led_width*self.led_height,
+        #                         pin=18, brightness=80, strip_type=WS2811_STRIP_RGB)
+        # self.strip.begin()
 
     @property
     def image(self):

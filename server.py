@@ -14,7 +14,7 @@ from sensors import Sensors
 UPLOAD_FOLDER = './temp_images/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
-sensors = Sensors()
+# sensors = Sensors()
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -83,19 +83,19 @@ gc = gcode.GCode()
 
 @app.route('/api/start', methods=['POST'])
 def start():
-    if gc.status is not gcode.Status.IDLE and not gc.connected:
-        return jsonify({"error": "already_running"}), 400
-    if "id" not in request.values.keys():
-        return jsonify({"error": "missing_id_parameter"}), 400
-    file = os.path.join(app.config["UPLOAD_FOLDER"], request.values.get("id")+".png")
-    if not os.path.isfile(file):
-        return jsonify({"error": "file_not_found"}), 404
-    port = "COM12"
-    if "port" in request.values.keys():
-        port = request.values.get("port")
-    gc.image = request.values.get("id")
-    thread = threading.Thread(target=gc.parse_image, args=[file, port])
-    thread.start()
+    # if gc.status is not gcode.Status.IDLE and not gc.connected:
+    #     return jsonify({"error": "already_running"}), 400
+    # if "id" not in request.values.keys():
+    #     return jsonify({"error": "missing_id_parameter"}), 400
+    # file = os.path.join(app.config["UPLOAD_FOLDER"], request.values.get("id")+".png")
+    # if not os.path.isfile(file):
+    #     return jsonify({"error": "file_not_found"}), 404
+    # port = "COM12"
+    # if "port" in request.values.keys():
+    #     port = request.values.get("port")
+    # gc.image = request.values.get("id")
+    # thread = threading.Thread(target=gc.parse_image, args=[file, port])
+    # thread.start()
 
     return jsonify({"status": "started"})
 
@@ -137,12 +137,12 @@ def get_status():
 
     return jsonify({"sensors": {
                         "ground": {
-                            "temperature": sensors.ground_temperature,
-                            "humidity": sensors.ground_humidity
+                            "temperature": random.randint(21, 23),
+                            "humidity": random.randint(30, 50)
                         },
                         "air": {
-                            "temperature": sensors.air_temperature,
-                            "humidity": sensors.air_humidity
+                            "temperature": random.randint(21, 23),
+                            "humidity": random.randint(30, 50)
                         }
                     },
                     "progress": {
@@ -151,9 +151,9 @@ def get_status():
                         "colors": gc.pixels[2],
                         "percent": round(gc.progress/100, 2)
                     },
-                    "status": gc.status.value,
-                    "status_code": gc.status.name,
-                    "connected": gc.connected,
+                    "status": Status.IDLE.value,
+                    "status_code": Status.IDLE.name,
+                    "connected": false,
                     "image": image})
 
 
