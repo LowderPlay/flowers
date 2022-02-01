@@ -1,4 +1,5 @@
 import os
+import random
 import threading
 import uuid
 
@@ -151,9 +152,9 @@ def get_status():
                         "colors": gc.pixels[2],
                         "percent": round(gc.progress/100, 2)
                     },
-                    "status": Status.IDLE.value,
-                    "status_code": Status.IDLE.name,
-                    "connected": false,
+                    "status": gcode.Status.IDLE.value,
+                    "status_code": gcode.Status.IDLE.name,
+                    "connected": False,
                     "image": image})
 
 
